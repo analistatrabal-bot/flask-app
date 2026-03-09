@@ -1,0 +1,83 @@
+<script>
+$(document).ready(function () {
+
+    // ===== DATATABLE =====
+    const table = $('#tablaRutas').DataTable({
+        pageLength: 5,
+        order: [[2, 'desc']]
+    });
+
+    // ===== DATOS BACKEND =====
+    const rutas = [
+        {% for r in rutas %}
+        {
+            origen: "{{ r.origen }}",
+            destino: "{{ r.destino }}",
+            total: {{ r.total }},
+            cliente: "{{ r.cliente or 'N/A' }}"
+        },
+        {% endfor %}
+    ];
+
+    const labels = rutas.map(r => `${r.origen} → ${r.destino}`);
+    const data = rutas.map(r => r.total);
+
+    // ===== GRÁFICA =====
+    const chart = new Chart(document.getElementById("graficaRutas"), {
+        type: "bar",
+        data: {
+            labels: labels,
+            datasets: [{
+                data: data,
+                backgroundColor: "#2563eb",
+                borderRadius: 6
+            }]
+        },
+        options: {
+            responsive: true,
+
+            // CLICK EN BARRA
+            onClick: (evt, elements) => {
+                if (elements.length > 0) {
+                    const index = elements[0].index;
+                    navegarRuta(rutas[index]);
+                }
+            },
+
+            plugins: {
+                legend: { display: false },
+
+                tooltip: {
+                    callbacks: {
+                        label: ctx => `Viajes: ${ctx.raw}`,
+                        afterLabel: ctx =>
+                            "Cliente: " + rutas[ctx.dataIndex].cliente
+                    }
+                }
+            },
+
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    ticks: { stepSize: 1 }
+                }
+            }
+        }
+    });
+
+    // ===== CLICK EN TABLA =====
+    $('#tablaRutas tbody').on('click', 'tr', function () {
+        const origen = $(this).data('origen');
+        const destino = $(this).data('destino');
+        navegarRuta({ origen, destino });
+    });
+
+    // ===== NAVEGACIÓN =====
+    function navegarRuta(ruta) {
+        const o = encodeURIComponent(ruta.origen);
+        const d = encodeURIComponent(ruta.destino);
+        window.location.href = `/historico_ruta?origen=${o}&destino=${d}`;
+    }
+
+});
+</script>

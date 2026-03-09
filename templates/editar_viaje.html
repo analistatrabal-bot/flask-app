@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Editar Viaje</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f4f6f9;
+            padding: 20px;
+        }
+
+        .header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background-color: #212529;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 10px;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .header img {
+            height: 50px;
+        }
+
+        .user-info {
+            text-align: right;
+            font-size: 14px;
+        }
+
+        .logout-btn {
+            background-color: #dc3545;
+            padding: 6px 10px;
+            border-radius: 5px;
+            color: white;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        .logout-btn:hover {
+            background-color: #a71d2a;
+        }
+
+        form {
+            background: #f1f0ec;
+            padding: 20px;
+            border-radius: 8px;
+            max-width: 700px;
+            margin: auto;
+            display: grid;
+            gap: 15px;
+        }
+
+        label {
+            font-weight: bold;
+            font-size: 14px;
+        }
+
+        input, select {
+            padding: 12px;
+            width: 100%;
+            margin-top: 5px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 14px;
+            min-height: 45px;
+        }
+
+        button {
+            padding: 12px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        .readonly {
+            background-color: #e9ecef;
+            pointer-events: none;
+        }
+    </style>
+</head>
+<body>
+
+<div class="header">
+    <div class="header-left">
+        <img src="{{ url_for('static', filename='images/LogosTransporte18.png') }}">
+        <h2>Editar Viaje</h2>
+    </div>
+
+    <div class="user-info">
+        <div><strong>Usuario:</strong> {{ session['usuario'] }}</div>
+        <div><strong>Rol:</strong> {{ session['rol'] }}</div>
+        <br>
+        <a href="{{ url_for('logout') }}" class="logout-btn">Cerrar Sesión</a>
+    </div>
+</div>
+
+<form method="POST">
+
+    <!-- CAMPOS EDITABLES PARA TODOS -->
+    <div>
+        <label>Folio</label>
+        <input type="text" name="folio" value="{{ viaje.folio }}" required>
+    </div>
+
+    <div>
+        <label>Unidad ID</label>
+        <input type="text" name="unidad_id" value="{{ viaje.unidad_id }}" required>
+    </div>
+
+    <div>
+        <label>Origen</label>
+        <input type="text" name="origen" value="{{ viaje.origen }}" required>
+    </div>
+
+    <div>
+        <label>Destino</label>
+        <input type="text" name="destino" value="{{ viaje.destino }}" required>
+    </div>
+
+    <div>
+        <label>Tipo Movimiento</label>
+        <select name="tipo_movimiento" required>
+            <option value="CARGA" {% if viaje.tipo_movimiento == "CARGA" %}selected{% endif %}>CARGA</option>
+            <option value="DESCARGA" {% if viaje.tipo_movimiento == "DESCARGA" %}selected{% endif %}>DESCARGA</option>
+            <option value="ARRIBO DESCARGA" {% if viaje.tipo_movimiento == "ARRIBO DESCARGA" %}selected{% endif %}>ARRIBO DESCARGA</option>
+            <option value="RETORNO" {% if viaje.tipo_movimiento == "RETORNO" %}selected{% endif %}>RETORNO</option>
+            <option value="BAJA" {% if viaje.tipo_movimiento == "BAJA" %}selected{% endif %}>BAJA</option>
+        </select>
+    </div>
+
+    <div>
+        <label>Cliente</label>
+        <select name="cliente" required>
+            {% for c in ["BIOPAPPEL","PIASA","HEINEKEN","SAN MARCOS","SALINERA ROCHE","GRUPO PORRES","SN/OPERACION"] %}
+                <option value="{{ c }}" {% if viaje.cliente == c %}selected{% endif %}>{{ c }}</option>
+            {% endfor %}
+        </select>
+    </div>
+
+    <!-- CAMPOS SOLO ADMIN -->
+    {% if session['rol'] == 'ADMIN' %}
+    
+    <div>
+        <label>Fecha Registro</label>
+        <input type="datetime-local" name="fecha_registro"
+               value="{{ viaje.fecha_registro.strftime('%Y-%m-%dT%H:%M') if viaje.fecha_registro }}">
+    </div>
+
+    <div>
+        <label>Fecha Descarga</label>
+        <input type="datetime-local" name="fecha_descarga"
+               value="{{ viaje.fecha_descarga.strftime('%Y-%m-%dT%H:%M') if viaje.fecha_descarga }}">
+    </div>
+
+    <div>
+        <label>Fecha Arribo Descarga</label>
+        <input type="datetime-local" name="fecha_arribo_descarga"
+               value="{{ viaje.fecha_arribo_descarga.strftime('%Y-%m-%dT%H:%M') if viaje.fecha_arribo_descarga }}">
+    </div>
+
+    <div>
+        <label>Fecha Retorno Descarga</label>
+        <input type="datetime-local" name="fecha_retorno_descarga"
+               value="{{ viaje.fecha_retorno_descarga.strftime('%Y-%m-%dT%H:%M') if viaje.fecha_retorno_descarga }}">
+    </div>
+
+    <div>
+        <label>Fecha Baja</label>
+        <input type="datetime-local" name="fecha_baja"
+               value="{{ viaje.fecha_baja.strftime('%Y-%m-%dT%H:%M') if viaje.fecha_baja }}">
+    </div>
+
+    <div>
+        <label>Coordinador</label>
+        <input type="text" name="coordinador" value="{{ viaje.coordinador }}">
+    </div>
+
+    {% endif %}
+
+    <button type="submit">Guardar</button>
+
+</form>
+
+</body>
+</html>

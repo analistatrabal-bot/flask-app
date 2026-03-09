@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>{% block title %}Sistema{% endblock %}</title>
+
+<style>
+
+body{
+margin:0;
+font-family:Arial;
+background:#f4f6f9;
+}
+
+.navbar{
+background:#1e293b;
+color:white;
+padding:15px 25px;
+display:flex;
+justify-content:space-between;
+align-items:center;
+}
+
+.navbar-right{
+display:flex;
+align-items:center;
+gap:20px;
+}
+
+.logout-btn{
+background:red;
+border:none;
+padding:8px 12px;
+color:white;
+border-radius:5px;
+cursor:pointer;
+}
+
+.logout-btn:hover{
+background:darkred;
+}
+
+.container{
+padding:25px;
+}
+
+/* 🔔 campana */
+
+.notification-bell{
+position:relative;
+font-size:18px;
+}
+
+.badge{
+position:absolute;
+top:-8px;
+right:-10px;
+background:red;
+color:white;
+border-radius:50%;
+padding:3px 7px;
+font-size:12px;
+}
+
+/* 🔔 toast */
+
+.toast-container{
+position:fixed;
+top:20px;
+right:20px;
+z-index:9999;
+}
+
+.toast{
+background:#1f2937;
+color:white;
+padding:15px 20px;
+margin-bottom:10px;
+border-radius:8px;
+min-width:280px;
+box-shadow:0 5px 15px rgba(0,0,0,0.3);
+animation:slideIn .3s ease;
+position:relative;
+}
+
+.toast button{
+position:absolute;
+top:6px;
+right:10px;
+background:none;
+border:none;
+color:white;
+font-weight:bold;
+cursor:pointer;
+}
+
+@keyframes slideIn{
+from{transform:translateX(100%);opacity:0}
+to{transform:translateX(0);opacity:1}
+}
+
+</style>
+</head>
+
+<body>
+
+{% if session.get("user_id") %}
+
+<div class="navbar">
+
+<div>
+🚛 Sistema de Viajes
+</div>
+
+<div class="navbar-right">
+
+<div>
+👤 {{ session.get("nombre") }} |
+Rol: <strong>{{ session.get("rol") }}</strong>
+</div>
+
+<div class="notification-bell">
+<a href="{{ url_for('ver_notificaciones') }}" style="color:white;text-decoration:none;">
+🔔
+{% if total_notificaciones and total_notificaciones > 0 %}
+<span class="badge">{{ total_notificaciones }}</span>
+{% endif %}
+</a>
+</div>
+
+<form action="{{ url_for('logout') }}">
+<button class="logout-btn">Cerrar sesión</button>
+</form>
+
+</div>
+</div>
+
+{% endif %}
+
+<div class="container">
+{% block content %}{% endblock %}
+</div>
+
+<div id="toast-container" class="toast-container"></div>
+
+<script>
+
+/* -------------------------
+   TOAST INTERNO
+-------------------------*/
+
+function mostrarToast(mensaje){
+
+const container=document.getElementById("toast-container")
+
+const toast=document.createElement("div")
+toast.className="toast"
+
+toast.innerHTML=`
+${mensaje}
+<button onclick="this.parentElement.remove()">×</button>
+`
+
+container.appendChild(toast)
+
+setTimeout(()=>{
+toast.remove()
+},5000)
+
+}
+
+/* -------------------------
+   FLASH MENSAJES FLASK
+-------------------------*/
+
+{% with messages = get_flashed_messages() %}
+{% if messages %}
+{% for message in messages %}
+mostrarToast(`{{message|safe}}`)
+{% endfor %}
+{% endif %}
+{% endwith %}
+
+/* -------------------------
+   NOTIFICACIONES NAVEGADOR
+-------------------------*/
+
+let ultimaNotificacion = localStorage.getItem("ultimaNotificacion") || 0
+
+if(Notification.permission!=="granted"){
+Notification.requestPermission()
+}
+
+function revisarNotificaciones(){
+
+fetch("/api/notificaciones_nuevas")
+.then(r=>r.json())
+.then(data=>{
+
+data.forEach(n=>{
+
+if(n.id>ultimaNotificacion){
+
+ultimaNotificacion=n.id
+
+/* toast dentro del sistema */
+
+mostrarToast(n.mensaje)
+
+/* notificacion del navegador */
+
+if(Notification.permission==="granted"){
+
+let notif=new Notification("🚛 Sistema de Viajes",{
+body:n.mensaje,
+icon:"/static/camion.png"
+})
+
+notif.onclick=function(){
+window.open("/notificaciones")
+}
+
+}
+
+}
+
+})
+
+})
+
+}
+
+setInterval(revisarNotificaciones,8000)
+
+</script>
+
+</body>
+</html>

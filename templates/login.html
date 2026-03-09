@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Login - Sistema de Viajes</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: url("{{ url_for('static', filename='images/trabal.jpeg') }}") no-repeat center center/cover;
+            position: relative;
+        }
+
+        /* Overlay oscuro elegante */
+        body::before {
+            content: "";
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.65);
+            backdrop-filter: blur(4px);
+        }
+
+        .login-box {
+            position: relative;
+            background: rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(15px);
+            padding: 50px 40px;
+            border-radius: 15px;
+            width: 380px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+            color: white;
+            animation: fadeIn 1s ease-in-out;
+        }
+
+        h2 {
+            text-align: center;
+            margin-bottom: 25px;
+            font-weight: 500;
+            letter-spacing: 1px;
+        }
+
+        /* Logo animado tipo camión */
+        .logo-container {
+            text-align: center;
+            margin-bottom: 10px;
+            overflow: hidden;
+        }
+
+        .logo-container img {
+            height: 100px;
+        }
+
+        @keyframes truckMove {
+            0% { transform: translateX(-40px); }
+            50% { transform: translateX(40px); }
+            100% { transform: translateX(-40px); }
+        }
+
+        input {
+            width: 100%;
+            padding: 12px;
+            margin: 12px 0;
+            border-radius: 8px;
+            border: none;
+            font-size: 14px;
+            outline: none;
+        }
+
+        input:focus {
+            box-shadow: 0 0 8px rgba(0,123,255,0.8);
+        }
+
+        button {
+            width: 100%;
+            padding: 12px;
+            margin-top: 10px;
+            background: linear-gradient(90deg, #007bff, #0056b3);
+            border: none;
+            color: white;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 15px;
+            font-weight: bold;
+            transition: 0.3s ease;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 15px rgba(0,0,0,0.3);
+        }
+
+        .error {
+            color: #ff6b6b;
+            text-align: center;
+            font-size: 14px;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .footer {
+            text-align: center;
+            margin-top: 15px;
+            font-size: 12px;
+            opacity: 0.7;
+        }
+
+    </style>
+</head>
+<body>
+
+    <div class="login-box">
+
+        <div class="logo-container">
+            <img src="{{ url_for('static', filename='images/LOGO.png') }}">
+        </div>
+
+        <h2>Acceso al Sistema</h2>
+
+        {% if error %}
+            <p class="error">{{ error }}</p>
+        {% endif %}
+
+        <form method="POST">
+            <input type="text" name="username" placeholder="Usuario" required>
+            <input type="password" name="password" placeholder="Contraseña" required>
+            <button type="submit">Iniciar Sesión</button>
+        </form>
+
+        <div class="footer">
+            Sistema de Gestión de Viajes © 2026
+        </div>
+
+    </div>
+
+</body>
+</html>

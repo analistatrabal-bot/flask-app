@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Panel Operador</title>
+
+<style>
+
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background: #111;
+    color: white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+.container {
+    width: 95%;
+    max-width: 400px;
+    background: #1e1e1e;
+    padding: 20px;
+    border-radius: 15px;
+}
+
+h2 {
+    text-align: center;
+}
+
+input, select {
+    width: 100%;
+    padding: 14px;
+    margin: 8px 0;
+    border-radius: 8px;
+    border: none;
+    font-size: 16px;
+}
+
+button {
+    width: 100%;
+    padding: 16px;
+    margin-top: 10px;
+    border: none;
+    border-radius: 10px;
+    font-size: 18px;
+    font-weight: bold;
+    background: #28a745;
+    color: white;
+    cursor: pointer;
+}
+
+button:hover {
+    background: #218838;
+}
+
+.success {
+    background: #155724;
+    padding: 10px;
+    border-radius: 8px;
+    margin-top: 10px;
+}
+
+.error {
+    background: #721c24;
+    padding: 10px;
+    border-radius: 8px;
+    margin-top: 10px;
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+<h2>🚛 Registro Operador</h2>
+
+<form method="POST">
+
+<input type="text" name="folio" placeholder="Folio" required>
+<input type="text" name="unidad_id" placeholder="Unidad" required>
+<input type="text" name="nombre_operador" placeholder="Nombre Operador" required>
+
+<select name="tipo_movimiento" required>
+    <option value="">Seleccionar movimiento</option>
+    <option value="ARRIBO_DESCARGA">Arribo</option>
+    <option value="DESCARGA">Descarga</option>
+    <option value="RETORNO">Retorno (Heineken)</option>
+</select>
+
+<button type="submit">Registrar Movimiento</button>
+
+</form>
+
+{% if success %}
+<div class="success">{{ success }}</div>
+{% endif %}
+
+{% if error %}
+<div class="error">{{ error }}</div>
+{% endif %}
+
+</div>
+
+</body>
+</html>

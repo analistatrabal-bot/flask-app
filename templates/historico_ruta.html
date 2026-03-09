@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Histórico de Ruta</title>
+
+    <link rel="stylesheet"
+          href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
+
+    <style>
+        body {
+            font-family: "Segoe UI", Arial, sans-serif;
+            background: #f4f6f8;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: auto;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        h2 {
+            margin: 0;
+        }
+
+        .badge {
+            background: #2563eb;
+            color: white;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 14px;
+        }
+
+        .btn {
+            background: #2563eb;
+            color: white;
+            padding: 8px 14px;
+            border-radius: 6px;
+            text-decoration: none;
+            font-size: 14px;
+        }
+
+        .btn.secondary {
+            background: #64748b;
+        }
+
+        .card {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+
+    <!-- HEADER -->
+    <div class="header">
+        <h2>
+            🧭 Ruta
+            <span class="badge">{{ origen }} → {{ destino }}</span>
+        </h2>
+        <div>
+             <a href="{{ url_for('top_rutas') }}" class="btn secondary">⬅ Top Rutas</a>
+             <a href="{{ url_for('unidades') }}" class="btn secondary">Unidades</a>
+             <a href="{{ url_for('disponibilidad') }}" class="btn secondary">Disponibilidad</a>
+             <a href="{{ url_for('registrar_viaje') }}" class="btn secondary">Registrar Viaje</a>
+        </div>
+    </div>
+
+    <!-- TABLA -->
+    <div class="card">
+        <table id="tablaHistorico" class="display">
+            <thead>
+            <tr>
+                <th>Fecha</th>
+                <th>Unidad</th>
+                <th>Cliente</th>
+                <th>Movimiento</th>
+                <th>Folio</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for v in viajes %}
+            <tr>
+                <td>{{ v.fecha_registro }}</td>
+                <td>{{ v.unidad_id }}</td>
+                <td>{{ v.cliente }}</td>
+                <td>{{ v.tipo_movimiento }}</td>
+                <td>{{ v.folio }}</td>
+            </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+</div>
+
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+
+<script>
+$(document).ready(function () {
+    $('#tablaHistorico').DataTable({
+        pageLength: 10,
+        order: [[0, 'desc']]
+    });
+});
+</script>
+
+</body>
+</html>

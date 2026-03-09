@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Crear Usuario</title>
+    <style>
+        body { font-family: Arial; background:#f4f6f9; padding:20px; }
+        form { background:white; padding:20px; max-width:400px; margin:auto; border-radius:8px; }
+        input, select { width:100%; padding:10px; margin:10px 0; }
+        button { background:#28a745; color:white; padding:10px; border:none; width:100%; }
+    </style>
+</head>
+<body>
+
+<h2>Crear Usuario</h2>
+
+{% if error %}
+<p style="color:red">{{ error }}</p>
+{% endif %}
+
+<form method="POST">
+
+    <input type="text" name="nombre" placeholder="Nombre completo" required>
+
+    <input type="text" name="username" placeholder="Username" required>
+
+    <input type="password" name="password" placeholder="Contraseña" required>
+
+    <select name="rol" required>
+        <option value="">Seleccionar Rol</option>
+        <option value="ADMIN">ADMIN</option>
+        <option value="COORDINADOR">COORDINADOR</option>
+        <option value="OPERADOR">OPERADOR</option>
+    </select>
+
+    <button type="submit">Guardar</button>
+
+</form>
+
+</body>
+</html>

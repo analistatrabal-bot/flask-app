@@ -1,0 +1,339 @@
+{% extends "base.html" %}
+
+{% block title %}Unidades{% endblock %}
+
+{% block content %}
+
+<style>
+
+.form-grid{
+display:grid;
+grid-template-columns:repeat(3,1fr);
+gap:30px;
+background:rgb(225, 241, 240);
+padding:20px;
+border-radius:8px;
+max-width:1150px;
+}
+
+label{
+font-weight:bold;
+font-size:1px;
+}
+
+input,select{
+padding:8px;
+width:90%;
+}
+
+.btn{
+grid-column:span 3;
+padding:10px;
+background:#2563eb;
+border:none;
+color:white;
+border-radius:6px;
+cursor:pointer;
+}
+
+.btn:hover{
+background:#1d4ed8;
+}
+
+table{
+width:100%;
+border-collapse:collapse;
+background:white;
+margin-top:25px;
+}
+
+th,td{
+border:1px solid #ddd;
+padding:8px;
+text-align:center;
+font-size:13px;
+}
+
+th{
+background:#1e293b;
+color:white;
+}
+
+.button{
+padding:5px 10px;
+background:#2563eb;
+border:none;
+color:white;
+border-radius:5px;
+cursor:pointer;
+}
+
+.button-red{
+background:red;
+}
+
+</style>
+<style>
+   h2{
+       margin:0;
+       font-family:Arial;
+       color: white;
+     }
+
+
+    .form-grid-4 {
+    display: grid;
+    grid-template-columns: repeat(1, 1fr);
+    gap: 50px;
+}
+
+.form-grid-4 div {
+    display: flex;
+    flex-direction: column;
+}
+
+input, select {
+    padding: 10px;
+    font-size: 13px;
+    height: 42px;
+}
+
+label {
+    font-size: 11px;
+    margin-bottom: 5px;
+}
+
+
+
+
+/*fondo de atras*/
+
+    body {
+        background: linear-gradient(rgba(0,0,0,0.75), rgba(0,0,0,0.75)),
+                    url("{{ url_for('static', filename='images/fondo_empresarial.jpg') }}");
+        background-size: cover;
+        background-position: center;
+        background-attachment: fixed;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+/*botones*/
+    .header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        background: rgba(0, 0, 0, 0.85);
+        color: white;
+        padding: 15px 30px;
+        border-radius: 12px;
+        margin-bottom: 30px;
+        box-shadow: 0 5px 20px rgba(0,0,0,0.5);
+    }
+
+    .header img {
+        height: 55px;
+    }
+
+    .header h2 {
+        margin: 0;
+        font-size: 26px;
+        letter-spacing: 1px;
+    }
+
+    .nav a {
+        text-decoration: none;
+        color: white;
+        padding: 10px 30px;
+        border-radius: 6px;
+        background: #1f2937;
+        font-weight: 600;
+        transition: 0.3s ease;
+    }
+
+    
+
+    
+
+    
+
+    label {
+        font-weight: 600;
+        font-size: 12px;
+        color: #374151;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+    }
+
+    input, select {
+        padding: 9px;
+        border-radius: 7px;
+        border: 1px solid #d1d5db;
+        font-size: 14px;
+        transition: 0.3s;
+    }
+
+   
+
+  
+
+    button {
+        padding: 10px;
+        background: #ffffff;
+        color: white;
+        border: none;
+        border-radius: 8px;
+        font-weight: bold;
+        font-size: 15px;
+        cursor: pointer;
+        transition: 0.3s;
+    }
+
+    
+
+    
+</style>
+<div class="header">
+    <img src="{{ url_for('static', filename='images/LogosTransporte18.png') }}">
+    <h2>🚛 Unidades</h2>
+    <div class="nav">
+        <a href="{{ url_for('dashboard') }}">Dashboard</a>
+        <a href="{{ url_for('registrar_viaje') }}">Registrar Viaje</a>
+        <a href="{{ url_for('disponibilidad') }}">Disponibilidad</a>
+        <a href="{{ url_for('historico_view') }}">Histórico</a>
+        <a href="{{ url_for('top_rutas') }}" >⬅ Top Rutas</a>
+       
+    </div>
+</div>
+
+
+
+<form method="POST" action="/unidades" class="form-grid">
+
+<div>
+<label>Unidad ID</label>
+<input type="text" name="unidad_id" required>
+</div>
+
+<div>
+<label>Placas Unidad</label>
+<input type="text" name="placas_unidad" required>
+</div>
+
+<div>
+<label>Operador</label>
+<input type="text" name="operador" required>
+</div>
+
+<div>
+<label>Licencia</label>
+<input type="text" name="licencia" required>
+</div>
+
+<div>
+<label>Caja 1</label>
+<input type="text" name="caja1">
+</div>
+
+<div>
+<label>Placas Caja 1</label>
+<input type="text" name="placas_caja1">
+</div>
+
+<div>
+<label>Caja 2</label>
+<input type="text" name="caja2">
+</div>
+
+<div>
+<label>Placas Caja 2</label>
+<input type="text" name="placas_caja2">
+</div>
+
+<div>
+<label>Dolly</label>
+<input type="text" name="dolly">
+</div>
+
+<div>
+<label>Coordinador</label>
+<select name="coordinador">
+<option value="Ximena">Ximena</option>
+<option value="Julio">Julio</option>
+<option value="Alejandra">Alejandra</option>
+</select>
+</div>
+
+<button class="btn" type="submit">Agregar Unidad</button>
+
+</form>
+<p>
+
+</p>
+<h2>Lista de Unidades</h2>
+
+<input type="text" id="search" placeholder="Buscar..." style="margin-bottom:15px;padding:8px;width:100%">
+
+<table id="unidadesTable">
+<thead>
+<tr>
+<th>Unidad ID</th>
+<th>Placas</th>
+<th>Operador</th>
+<th>Licencia</th>
+<th>Caja1</th>
+<th>Placas Caja1</th>
+<th>Caja2</th>
+<th>Placas Caja2</th>
+<th>Dolly</th>
+<th>Coordinador</th>
+<th>Acciones</th>
+</tr>
+</thead>
+
+<tbody>
+
+{% for unidad in unidades %}
+
+<tr>
+<td>{{ unidad.unidad_id }}</td>
+<td>{{ unidad.placas_unidad }}</td>
+<td>{{ unidad.operador }}</td>
+<td>{{ unidad.licencia }}</td>
+<td>{{ unidad.caja1 }}</td>
+<td>{{ unidad.placas_caja1 }}</td>
+<td>{{ unidad.caja2 }}</td>
+<td>{{ unidad.placas_caja2 }}</td>
+<td>{{ unidad.dolly }}</td>
+<td>{{ unidad.coordinador }}</td>
+
+<td>
+<a href="/editar_unidad/{{ unidad.unidad_id }}" class="button">Editar</a>
+<a href="/eliminar_unidad/{{ unidad.unidad_id }}" class="button button-red">Eliminar</a>
+</td>
+
+</tr>
+
+{% endfor %}
+
+</tbody>
+</table>
+
+<script>
+
+document.getElementById("search").addEventListener("keyup",function(){
+
+let filter=this.value.toLowerCase()
+let rows=document.querySelectorAll("#unidadesTable tbody tr")
+
+rows.forEach(row=>{
+
+let text=row.innerText.toLowerCase()
+
+row.style.display=text.includes(filter)?"":"none"
+
+})
+
+})
+
+</script>
+
+{% endblock %}

@@ -1,0 +1,95 @@
+{% extends "base.html" %}
+
+{% block title %}Notificaciones{% endblock %}
+
+{% block content %}
+<div class="menu-acciones">
+
+<a href="{{ url_for('dashboard') }}" class="btn-nav">🏠 Dashboard</a>
+
+<a href="{{ url_for('registrar_viaje') }}" class="btn-nav">🚛 Registrar Viaje</a>
+
+<a href="{{ url_for('unidades') }}" class="btn-nav">🚚 Unidades</a>
+
+<a href="{{ url_for('disponibilidad') }}" class="btn-nav">📊 Disponibilidad</a>
+
+</div>
+
+
+
+<h2>🔔 Notificaciones de Hoy</h2>
+
+{% if notificaciones %}
+    {% for n in notificaciones %}
+        <div class="card">
+            <div class="mensaje">
+                {{ n.mensaje }}
+            </div>
+            <div class="acciones">
+                <small>{{ n.fecha.strftime("%H:%M") }}</small>
+                <button onclick="ocultarNotificacion({{ n.id }})">Quitar</button>
+            </div>
+        </div>
+    {% endfor %}
+{% else %}
+    <p>No hay notificaciones hoy.</p>
+{% endif %}
+
+<style>
+.card {
+    background: white;
+    padding: 15px;
+    margin-bottom: 10px;
+    border-radius: 8px;
+    box-shadow: 0 3px 8px rgba(0,0,0,0.1);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.acciones button {
+    background: red;
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.acciones button:hover {
+    background: darkred;
+}
+
+.menu-acciones{
+display:flex;
+gap:10px;
+margin-bottom:20px;
+flex-wrap:wrap;
+}
+
+.btn-nav{
+text-decoration:none;
+background:#2563eb;
+color:white;
+padding:8px 14px;
+border-radius:6px;
+font-weight:bold;
+font-size:13px;
+}
+
+.btn-nav:hover{
+background:#1d4ed8;
+}
+</style>
+
+<script>
+function ocultarNotificacion(id) {
+    fetch(`/ocultar_notificacion/${id}`, {
+        method: "POST"
+    }).then(() => {
+        location.reload();
+    });
+}
+</script>
+
+{% endblock %}

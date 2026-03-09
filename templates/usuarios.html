@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Gestión de Usuarios</title>
+    <style>
+        body { font-family: Arial; background:#f4f6f9; padding:20px; }
+        table { width:100%; border-collapse: collapse; background:white; }
+        th, td { padding:10px; border:1px solid #ddd; text-align:center; }
+        th { background:#212529; color:white; }
+        a { text-decoration:none; padding:6px 10px; border-radius:5px; color:white; }
+        .crear { background:#28a745; }
+        .editar { background:#007bff; }
+        .eliminar { background:#dc3545; }
+    </style>
+</head>
+<body>
+
+<h2>Gestión de Usuarios</h2>
+
+<a href="{{ url_for('crear_usuario') }}" class="crear">➕ Crear Usuario</a>
+<a href="{{ url_for('unidades') }}" class="crear">Unidades</a>
+<a href="{{ url_for('disponibilidad') }}"class="crear">Disponibilidad</a>
+<a href="{{ url_for('registrar_viaje') }}"class="crear">Registrar Viaje</a>
+<a href="{{ url_for('usuarios') }}"class="crear">Usuarios</a>
+
+<br><br>
+
+<table>
+    <tr>
+        <th>Nombre</th>
+        <th>Username</th>
+        <th>Rol</th>
+        <th>Acciones</th>
+    </tr>
+
+    {% for u in usuarios %}
+    <tr>
+        <td>{{ u.nombre }}</td>
+        <td>{{ u.username }}</td>
+        <td>{{ u.rol }}</td>
+        <td>
+            
+            <a href="{{ url_for('editar_usuario', id=u.id) }}" class="editar">Editar</a>
+            <a href="{{ url_for('eliminar_usuario', id=u.id) }}" class="eliminar"
+               onclick="return confirm('¿Seguro que deseas eliminar este usuario?')">
+               Eliminar
+            </a>
+        </td>
+    </tr>
+    {% endfor %}
+</table>
+
+</body>
+</html>

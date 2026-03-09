@@ -1,0 +1,293 @@
+{% extends "base.html" %}
+
+{% block title %}Disponibilidad de Unidades{% endblock %}
+
+{% block content %}
+
+<style>
+
+h2{
+margin-bottom:15px;
+}
+
+table{
+width:100%;
+border-collapse:collapse;
+background:white;
+}
+
+th,td{
+border:1px solid #ddd;
+padding:8px;
+font-size:13px;
+text-align:center;
+}
+
+th{
+background:#1e293b;
+color:white;
+}
+
+.alerta{
+background:#fff3cd;
+}
+
+.critico{
+background:#f8d7da;
+}
+
+.search-box{
+margin-bottom:20px;
+}
+
+input{
+padding:8px;
+width:100%;
+}
+
+</style>
+
+<style>
+   h2{
+       margin:0;
+       font-family:Arial;
+       color: white;
+     }
+
+
+    .form-grid-4 {
+    display: grid;
+    grid-template-columns: repeat(1, 1fr);
+    gap: 50px;
+}
+
+.form-grid-4 div {
+    display: flex;
+    flex-direction: column;
+}
+
+input, select {
+    padding: 10px;
+    font-size: 13px;
+    height: 42px;
+}
+
+label {
+    font-size: 11px;
+    margin-bottom: 5px;
+}
+
+
+
+
+/*fondo de atras*/
+
+    body {
+        background: linear-gradient(rgba(0,0,0,0.75), rgba(0,0,0,0.75)),
+                    url("{{ url_for('static', filename='images/fondo_empresarial.jpg') }}");
+        background-size: cover;
+        background-position: center;
+        background-attachment: fixed;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+/*botones*/
+    .header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        background: rgba(0, 0, 0, 0.85);
+        color: white;
+        padding: 15px 30px;
+        border-radius: 12px;
+        margin-bottom: 30px;
+        box-shadow: 0 5px 20px rgba(0,0,0,0.5);
+    }
+
+    .header img {
+        height: 55px;
+    }
+
+    .header h2 {
+        margin: 0;
+        font-size: 26px;
+        letter-spacing: 1px;
+    }
+
+    .nav a {
+        text-decoration: none;
+        color: white;
+        padding: 10px 30px;
+        border-radius: 6px;
+        background: #1f2937;
+        font-weight: 600;
+        transition: 0.3s ease;
+    }
+
+    
+
+    
+
+    
+
+    label {
+        font-weight: 600;
+        font-size: 12px;
+        color: #374151;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+    }
+
+    input, select {
+        padding: 9px;
+        border-radius: 7px;
+        border: 1px solid #d1d5db;
+        font-size: 14px;
+        transition: 0.3s;
+    }
+
+   
+
+  
+
+    button {
+        padding: 10px;
+        background: #ffffff;
+        color: white;
+        border: none;
+        border-radius: 8px;
+        font-weight: bold;
+        font-size: 15px;
+        cursor: pointer;
+        transition: 0.3s;
+    }
+
+    
+
+    
+</style>
+<div class="header">
+    <img src="{{ url_for('static', filename='images/LogosTransporte18.png') }}">
+    <h2>🚛 Disponibilidad de Unidades</h2>
+    <div class="nav">
+        <a href="{{ url_for('dashboard') }}">Dashboard</a>
+        <a href="{{ url_for('registrar_viaje') }}">Registrar Viaje</a>
+        <a href="{{ url_for('unidades') }}">Unidades</a>
+        <a href="{{ url_for('historico_view') }}">Histórico</a>
+        <a href="{{ url_for('top_rutas') }}" >⬅ Top Rutas</a>
+       
+    </div>
+</div>
+<div class="search-box">
+<input type="text" id="search" placeholder="Buscar por unidad, operador, origen o destino...">
+</div>
+
+<h2>Unidades Disponibles</h2>
+
+<table id="disponibilidadTable">
+<thead>
+<tr>
+<th>Unidad</th>
+<th>Operador</th>
+<th>Fecha Descarga</th>
+<th>Días Disponibles</th>
+<th>Origen</th>
+<th>Destino</th>
+<th>Coordinador</th>
+<th>Cliente</th>
+</tr>
+</thead>
+
+<tbody>
+
+{% for u in disponibles %}
+
+<tr class="
+{% if u.dias_disponible >= 5 and u.dias_disponible < 10 %}alerta{% endif %}
+{% if u.dias_disponible >= 10 %}critico{% endif %}
+">
+
+<td>{{ u.unidad_id }}</td>
+<td>{{ u.operador }}</td>
+<td>{{ u.fecha_descarga.strftime("%Y-%m-%d %H:%M:%S") }}</td>
+<td>{{ u.dias }} días {{ u.horas }} hrs</td>
+<td>{{ u.origen }}</td>
+<td>{{ u.destino }}</td>
+<td>{{ u.coordinador }}</td>
+<td>{{ u.cliente }}</td>
+
+</tr>
+
+{% endfor %}
+
+</tbody>
+</table>
+
+<br>
+
+<h2>Unidades que Arribaron a Descargar</h2>
+
+<table id="arribaronTable">
+
+<thead>
+<tr>
+<th>Unidad</th>
+<th>Operador</th>
+<th>Fecha Arribo Descarga</th>
+<th>Origen</th>
+<th>Destino</th>
+<th>Coordinador</th>
+<th>Cliente</th>
+</tr>
+</thead>
+
+<tbody>
+
+{% for u in arribaron_a_descargar %}
+
+<tr>
+
+<td>{{ u.unidad_id }}</td>
+<td>{{ u.operador }}</td>
+<td>{{ u.fecha_arribo_descarga.strftime("%Y-%m-%d %H:%M:%S") }}</td>
+<td>{{ u.origen }}</td>
+<td>{{ u.destino }}</td>
+<td>{{ u.coordinador }}</td>
+<td>{{ u.cliente }}</td>
+
+</tr>
+
+{% endfor %}
+
+</tbody>
+
+</table>
+
+<script>
+
+document.getElementById("search").addEventListener("keyup",function(){
+
+let filter=this.value.toLowerCase()
+
+let rows1=document.querySelectorAll("#disponibilidadTable tbody tr")
+let rows2=document.querySelectorAll("#arribaronTable tbody tr")
+
+function filtrar(rows){
+
+rows.forEach(row=>{
+
+let text=row.innerText.toLowerCase()
+
+row.style.display=text.includes(filter)?"":"none"
+
+})
+
+}
+
+filtrar(rows1)
+filtrar(rows2)
+
+})
+
+</script>
+
+{% endblock %}

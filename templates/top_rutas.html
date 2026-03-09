@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Top Rutas</title>
+
+    <!-- DataTables -->
+    <link rel="stylesheet"
+          href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
+
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <style>
+        body {
+            font-family: "Segoe UI", Arial, sans-serif;
+            background: #f4f6f8;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: auto;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        h1 {
+            margin: 0;
+            font-size: 26px;
+        }
+
+        .btn {
+            background: #2563eb;
+            color: white;
+            padding: 8px 14px;
+            border-radius: 6px;
+            text-decoration: none;
+            font-size: 14px;
+            margin-left: 5px;
+        }
+
+        .btn.secondary {
+            background: #64748b;
+        }
+
+        .card {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+        }
+
+        canvas {
+            max-height: 300px;
+        }
+
+        table.dataTable tbody tr {
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+
+    <!-- HEADER -->
+    <div class="header">
+        <h1>📊 Top Rutas más Frecuentes</h1>
+        <div>
+            <a href="{{ url_for('registrar_viaje') }}" class="btn secondary">🏠 Inicio</a>
+            <a href="{{ url_for('unidades') }}" class="btn secondary">🚚 Unidades</a>
+            <a href="{{ url_for('disponibilidad') }}" class="btn secondary">📦 Disponibilidad</a>
+            <a href="{{ url_for('registrar_viaje') }}" class="btn secondary">➕ Registrar Viaje</a>
+        </div>
+    </div>
+
+    <!-- GRAFICA -->
+    <div class="card">
+        <canvas id="graficaRutas"></canvas>
+    </div>
+
+    <!-- TABLA -->
+    <div class="card">
+        <table id="tablaRutas" class="display">
+            <thead>
+            <tr>
+                <th>Origen</th>
+                <th>Destino</th>
+                <th>Total Viajes</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for r in rutas %}
+            <tr data-origen="{{ r.origen }}" data-destino="{{ r.destino }}">
+                <td>{{ r.origen }}</td>
+                <td>{{ r.destino }}</td>
+                <td>{{ r.total }}</td>
+            </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+</div>
+
+<!-- LIBRERÍAS -->
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+
+<!-- 🔥 DATOS DESDE FLASK -->
+<script>
+    const rutasData = {{ rutas | tojson }};
+</script>
+
+<!-- JS PRINCIPAL -->
+<script>
+$(document).ready(function () {
+
+    // DataTable
+    const table = $('#tablaRutas').DataTable({
+        pageLength: 5,
+        order: [[2, 'desc']]
+    });
+
+    // Click en tabla → historial
+    $('#tablaRutas tbody').on('click', 'tr', function () {
+        const origen = $(this).data('origen');
+        const destino = $(this).data('destino');
+
+        window.location.href =
+            `/historico_ruta?origen=${encodeURIComponent(origen)}&destino=${encodeURIComponent(destino)}`;
+    });
+
+    // Datos gráfica
+    const labels = rutasData.map(
+        r => `${r.origen} → ${r.destino}`
+    );
+
+    const data = rutasData.map(
+        r => r.total
+    );
+
+    // Gráfica
+    new Chart(document.getElementById("graficaRutas"), {
+        type: "bar",
+        data: {
+            labels: labels,
+            datasets: [{
+                data: data,
+                backgroundColor: "#2563eb"
+            }]
+        },
+        options: {
+            plugins: {
+                legend: { display: false }
+            },
+            onClick: (evt, elements) => {
+                if (elements.length > 0) {
+                    const index = elements[0].index;
+                    const ruta = rutasData[index];
+
+                    window.location.href =
+                        `/historico_ruta?origen=${encodeURIComponent(ruta.origen)}&destino=${encodeURIComponent(ruta.destino)}`;
+                }
+            }
+        }
+    });
+
+});
+</script>
+
+</body>
+</html>

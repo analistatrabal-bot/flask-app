@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Editar Usuario</title>
+    <style>
+        body { font-family: Arial; background:#f4f6f9; padding:20px; }
+        form { background:white; padding:20px; max-width:400px; margin:auto; border-radius:8px; }
+        input, select { width:100%; padding:10px; margin:10px 0; }
+        button { background:#007bff; color:white; padding:10px; border:none; width:100%; }
+    </style>
+</head>
+<body>
+
+<h2>Editar Usuario</h2>
+
+<form method="POST">
+
+    <input type="text" name="nombre" value="{{ usuario.nombre }}" required>
+
+    <input type="text" name="username" value="{{ usuario.username }}" required>
+
+    <input type="password" name="password" placeholder="Nueva contraseña (opcional)">
+
+    <select name="rol" required>
+        <option value="ADMIN" {% if usuario.rol == "ADMIN" %}selected{% endif %}>ADMIN</option>
+        <option value="COORDINADOR" {% if usuario.rol == "COORDINADOR" %}selected{% endif %}>COORDINADOR</option>
+        <option value="OPERADOR" {% if usuario.rol == "OPERADOR" %}selected{% endif %}>OPERADOR</option>
+    </select>
+
+    <button type="submit">Actualizar</button>
+
+</form>
+
+</body>
+</html>

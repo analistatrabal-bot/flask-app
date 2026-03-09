@@ -1,0 +1,332 @@
+{% extends "base.html" %}
+
+{% block title %}Histórico{% endblock %}
+
+{% block content %}
+
+<!-- DataTables -->
+<link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+
+<style>
+
+table{
+width:100%;
+border-collapse:collapse;
+background:white;
+margin-top:25px;
+}
+
+th,td{
+border:1px solid #ddd;
+padding:8px;
+text-align:center;
+font-size:13px;
+}
+
+th{
+background:#1e293b;
+color:white;
+}
+
+.button{
+padding:8px 15px;
+background:#2563eb;
+color:white;
+border-radius:5px;
+text-decoration:none;
+display:inline-block;
+}
+
+.button-red{
+background:red;
+}
+
+body {
+background: linear-gradient(rgba(0,0,0,0.75), rgba(0,0,0,0.75)),
+url("{{ url_for('static', filename='images/fondo_empresarial.jpg') }}");
+background-size: cover;
+background-position: center;
+background-attachment: fixed;
+font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.header {
+display:flex;
+align-items:center;
+justify-content:space-between;
+background:rgba(0,0,0,0.85);
+color:white;
+padding:15px 30px;
+border-radius:12px;
+margin-bottom:30px;
+box-shadow:0 5px 20px rgba(0,0,0,0.5);
+}
+
+.header img{
+height:55px;
+}
+
+.header h2{
+margin:0;
+font-size:26px;
+}
+
+.nav a{
+text-decoration:none;
+color:white;
+padding:10px 30px;
+border-radius:6px;
+background:#1f2937;
+font-weight:600;
+}
+
+/* DataTables texto blanco */
+
+
+
+.dataTables_length label{
+color:white;
+}
+
+.dataTables_filter label{
+color:white;
+}
+
+.dataTables_info{
+color:white;
+}
+
+.dataTables_paginate a{
+color:white !important;
+}
+
+.dataTables_filter input{
+background:#1f2937;
+color:white;
+border:1px solid #555;
+}
+
+.dataTables_length select{
+background:#1f2937;
+color:white;
+border:1px solid #555;
+}
+
+</style>
+
+<div class="header">
+<img src="{{ url_for('static', filename='images/LogosTransporte18.png') }}">
+<h2>📊 Histórico de Datos</h2>
+
+<div class="nav">
+<a href="{{ url_for('dashboard') }}">Dashboard</a>
+<a href="{{ url_for('registrar_viaje') }}">Registrar Viaje</a>
+<a href="{{ url_for('disponibilidad') }}">Disponibilidad</a>
+<a href="{{ url_for('unidades') }}">Unidades</a>
+<a href="{{ url_for('top_rutas') }}">⬅ Top Rutas</a>
+</div>
+
+</div>
+
+<a href="{{ url_for('exportar_historico') }}" class="button">
+Descargar Histórico en Excel
+</a>
+
+<p></p>
+
+<center><h2 style="color:white;">Viajes</h2></center>
+
+
+
+<div style="margin:20px 0; display:flex; gap:20px; flex-wrap:wrap; color:white;">
+
+<div>
+<label>Movimiento</label>
+<select id="filtroMovimiento">
+<option value="">Todos</option>
+<option value="CARGA">CARGA</option>
+<option value="DESCARGA">DESCARGA</option>
+<option value="ARRIBO_DESCARGA">ARRIBO_DESCARGA</option>
+<option value="RETORNO_DESCARGA">RETORNO_DESCARGA</option>
+</select>
+</div>
+
+<div>
+<label>Cliente</label>
+<select id="filtroCliente">
+<option value="">Todos</option>
+</select>
+</div>
+
+<div>
+<label>Fecha desde</label>
+<input type="date" id="fechaInicio">
+</div>
+
+<div>
+<label>Fecha hasta</label>
+<input type="date" id="fechaFin">
+</div>
+
+</div>
+
+
+<table id="viajesTable">
+
+<thead>
+
+<tr>
+<th>Folio</th>
+<th>Unidad</th>
+<th>Origen</th>
+<th>Destino</th>
+<th>Movimiento</th>
+<th>Fecha Registro</th>
+<th>Fecha Descarga</th>
+<th>Fecha Arribo</th>
+<th>Cliente</th>
+<th>Fecha Baja</th>
+<th>Fecha Retorno</th>
+<th>Coordinador</th>
+<th>Editar</th>
+<th>Eliminar</th>
+</tr>
+
+</thead>
+
+<tbody>
+
+{% for viaje in viajes %}
+
+<tr>
+
+<td>{{ viaje.folio }}</td>
+<td>{{ viaje.unidad_id }}</td>
+<td>{{ viaje.origen }}</td>
+<td>{{ viaje.destino }}</td>
+<td>{{ viaje.tipo_movimiento }}</td>
+<td>{{ viaje.fecha_registro }}</td>
+<td>{{ viaje.fecha_descarga }}</td>
+<td>{{ viaje.fecha_arribo_descarga }}</td>
+<td>{{ viaje.cliente }}</td>
+<td>{{ viaje.fecha_baja }}</td>
+<td>{{ viaje.fecha_retorno_descarga }}</td>
+<td>{{ viaje.coordinador }}</td>
+
+<td>
+
+<a href="{{ url_for('editar_viaje', id=viaje.id) }}" class="button">
+Editar
+</a>
+
+</td>
+
+<td>
+
+{% if session.get("rol") == "ADMIN" %}
+
+<form action="{{ url_for('eliminar_viaje', id=viaje.id) }}" method="POST">
+
+<button
+style="background:red;color:white;border:none;padding:6px 10px;border-radius:5px;"
+onclick="return confirm('¿Eliminar este registro?')">
+
+Eliminar
+
+</button>
+
+</form>
+
+{% endif %}
+
+</td>
+
+</tr>
+
+{% endfor %}
+
+</tbody>
+
+</table>
+
+<script>
+$(document).ready(function(){
+
+let table = $('#viajesTable').DataTable({
+
+pageLength:10,
+lengthMenu:[10,25,50,100],
+order:[[5,"desc"]],
+
+language:{
+search:"🔎 Buscar:",
+lengthMenu:"Mostrar _MENU_ registros",
+info:"Mostrando _START_ a _END_ de _TOTAL_ registros",
+paginate:{
+next:"Siguiente",
+previous:"Anterior"
+}
+}
+
+});
+
+
+/* FILTRO MOVIMIENTO */
+
+$('#filtroMovimiento').on('change', function(){
+table.column(4).search(this.value).draw();
+});
+
+
+/* FILTRO CLIENTE */
+
+let clientes = new Set();
+
+table.column(8).data().each(function(value){
+clientes.add(value);
+});
+
+clientes.forEach(function(cliente){
+$('#filtroCliente').append(`<option value="${cliente}">${cliente}</option>`);
+});
+
+$('#filtroCliente').on('change', function(){
+table.column(8).search(this.value).draw();
+});
+
+
+/* FILTRO FECHA */
+
+$.fn.dataTable.ext.search.push(function(settings,data){
+
+let fechaInicio = $('#fechaInicio').val();
+let fechaFin = $('#fechaFin').val();
+
+let fechaRegistro = data[5];
+
+if(!fechaInicio && !fechaFin){
+return true;
+}
+
+if(fechaInicio && fechaRegistro < fechaInicio){
+return false;
+}
+
+if(fechaFin && fechaRegistro > fechaFin){
+return false;
+}
+
+return true;
+
+});
+
+$('#fechaInicio, #fechaFin').on('change', function(){
+table.draw();
+});
+
+});
+</script>
+
+{% endblock %}
